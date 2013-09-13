@@ -1,0 +1,22 @@
+{
+  "name": "pin",
+  "version": "0.0.0",
+  "description": "an app to generate pin codes for connecting devices",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/benfoxall/pin.git"
+  },
+  "author": "Ben Foxall (@benjaminbenben)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "~3.4.0"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  }
+}
