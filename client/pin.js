@@ -32,6 +32,7 @@
       self.peer_id = id;
       self.open = true;
       self.emit('open');
+      self.emit('status','connected to peerserver');
     });
 	}
 
@@ -42,11 +43,7 @@
     if(this.open){
       callback.call(this);
     } else {
-      console.log("opening peerserver connection");
-      this.peer.on('open', function(id){
-        console.log("open!", callback)
-        self.peer_id = id;
-        self.open = true;
+      this.on('open', function(id){
         callback.call(self)
       });
     }
@@ -56,10 +53,9 @@
   Pin.prototype.connection = function(dataChannel){
     var self = this;
     if(!this.dataChannel){
-      console.log("connection!");
       (this.dataChannel = dataChannel).on('open', function(){
-        console.log("open!");
         self.emit("ready", dataChannel)  
+        self.emit('status','connected to client');
       })
     }
   }
@@ -68,7 +64,7 @@
 	Pin.prototype.generate = function(callback){
 
     this.on_open(function(){
-      // generate pin on the server
+      this.emit('status','generating pin');
       reqwest({
         url: this.endpoint,
         method: 'post',
@@ -88,6 +84,7 @@
     var self = this;
 
     this.on_open(function(){
+      this.emit('status','connecing with pin');
       reqwest({
         url: this.endpoint + '/' + pin,
         method: 'post',
@@ -95,7 +92,6 @@
         type: 'json',
       })
       .then(function(response){
-        console.log("connect to ", response.peer_id)
         var datachannel = self.peer.connect(response.peer_id)
         self.connection(datachannel)
       })

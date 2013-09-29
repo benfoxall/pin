@@ -5,29 +5,66 @@
 	<script type="text/javascript" src="pin.js"></script>
 </head>
 <body>
-	<button onclick="generate();">Generate pin</button>
-	<button onclick="enter();">Enter pin</button>
+	<button id="generate">Generate pin</button>
+	<button id="enter">Enter pin</button>
+	<button id="ping">Ping</button>
+
+	<ul id="messages"></ul>
+	
 
 	<script type="text/javascript">
 		var peer = new Peer({key: '931o5syxyhzrggb9'});
 		var pin = new Pin(peer, 'http://' + document.location.host);
 
-		function generate(){
+		click('generate', function(){
 			pin.generate(function(p){
 				alert("pin: " + p.join(' '))
 			})			
-		}
-		function enter(){
-			var p = prompt('pin');
-			pin.use(p);
-		}
+		});
+
+		click('enter', function(){
+			pin.use(prompt('pin'));
+		});
+
 
 		pin.on('ready', function(dataChannel){
 			dataChannel.on('data', function(data){
-				console.log("recieved: ", data);
-			})
+				message("<- " + data);
+			});
 			dataChannel.send("HELLO FROM " + pin.peer_id);
-		})
+		});
+
+
+		// log the statusses to the page
+		pin.on('status', function(m){
+			message("status:" + m);
+		});
+
+
+		// enable ping/pong
+		pin.on('ready', function(dataChannel){
+			dataChannel.on('data', function(data){
+				if(data === 'ping'){
+					message('<- pong')
+					dataChannel.send('pong');
+				}
+			});
+
+			click('ping', function(){
+				message('-> ping');
+				dataChannel.send("ping");
+			});
+		});
+
+		function click(id, fn){
+			document.getElementById(id).addEventListener('click', fn, false);
+		}
+
+		function message(message){
+			var li = document.createElement('li');
+			li.innerText = message;
+			document.getElementById('messages').appendChild(li);
+		}
 
 	</script>
 
