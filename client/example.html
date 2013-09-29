@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>Pin Example</title>
+	<script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+	<script type="text/javascript" src="pin.js"></script>
+</head>
+<body>
+	<button onclick="generate();">Generate pin</button>
+	<button onclick="enter();">Enter pin</button>
+
+	<script type="text/javascript">
+		var peer = new Peer({key: '931o5syxyhzrggb9'});
+		var pin = new Pin(peer, 'http://' + document.location.host);
+
+		function generate(){
+			pin.generate(function(p){
+				alert("pin: " + p.join(' '))
+			})			
+		}
+		function enter(){
+			var p = prompt('pin');
+			pin.use(p);
+		}
+
+		pin.on('ready', function(dataChannel){
+			dataChannel.on('data', function(data){
+				console.log("recieved: ", data);
+			})
+			dataChannel.send("HELLO FROM " + pin.peer_id);
+		})
+
+	</script>
+
+</body>
+</html>

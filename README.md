@@ -43,7 +43,7 @@ pin(function(digits){
 	dataConnection.on('data', function(message){
 		alert(message)
 	})
-	dataConnection.send('hello from pin enterer')
+	dataConnection.send('hello from pin generator')
 })
 
 
